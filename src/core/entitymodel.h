@@ -18,57 +18,37 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. *
 ***************************************************************************/
 
-#ifndef QBSPINFOCORE_H
-#define QBSPINFOCORE_H
+#ifndef ENTITYMODEL_H
+#define ENTITYMODEL_H
 
-#include <QtCore/QObject>
+#include "core/entityitem.h"
+
+#include <QtCore/QAbstractItemModel>
+#include <QtCore/QByteArray>
 #include <QtCore/QStringList>
+#include <QtCore/QList>
 
-#include "core/config.h"
-#include "core/entitymodel.h"
-
-namespace Core {
-	enum ErrorCode {
-		none = 0, 
-		notBspFile = 1,
-		notQ3Bsp = 2, 
-		notConfigured = 12
-	};
-};
-
-class QBspInfoCore : public QObject
+class EntityModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    explicit QBspInfoCore(QObject *parent = 0);
-	~QBspInfoCore();
-	Config* config() const;
-	bool openBspFile(const QString& filename);
-	// TODO replace QByteArray on the Model
-	QByteArray entities_a();
-	EntityModel* entities();
-	// TODO replace QStringList on the Model
-	QStringList resources();
-
-public Q_SLOTS:
-	void showSettings();
-
-private Q_SLOTS:
-	void slotMessageToUser();
+    explicit EntityModel(QObject *parent = 0);
+	~EntityModel();
 	
-Q_SIGNALS:
-	void messageToUser(const QString& title, const QString& message);
+	QVariant data(const QModelIndex &index, int role) const;
+	Qt::ItemFlags flags(const QModelIndex &index) const;
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+	QModelIndex parent(const QModelIndex &index) const;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const;
 	
+	void parseRawData(const char* data);
+	void clearData();
+
 private:
-	Config *_conf;
-	Core::ErrorCode _errorCode;
-	
-	// TODO replace QStringList on the Model
-	QStringList _resources;
-	
-	EntityModel *_entities;
-	// TODO replace QByteArray on the Model
-	QByteArray _entities_a;
+	QList<EntityItem*> _entitesItemsList;
+	EntityItem *_rootItem;
 };
 
-#endif // QBSPINFOCORE_H
+#endif // ENTITYMODEL_H

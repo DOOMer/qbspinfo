@@ -38,6 +38,8 @@ set(QBSPINFOTOOL_SRC
 src/main.cpp 
 src/core/qbspinfocore.cpp 
 src/core/config.cpp 
+src/core/entityitem.cpp 
+src/core/entitymodel.cpp 
 src/ui/mainwindow.cpp
 src/ui/aboutdialog.cpp
 src/ui/configdialog.cpp 
@@ -45,6 +47,8 @@ src/ui/configdialog.cpp
  
 set(QBSPINFOTOOL_HDR
 src/core/config.h 
+src/core/entityitem.h 
+src/core/entitymodel.h 
 src/core/qbspinfocore.h 
 src/ui/mainwindow.h
 src/ui/aboutdialog.h

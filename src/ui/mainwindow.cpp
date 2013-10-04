@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
     _ui->setupUi(this);
 	_ui->tabWidget->setCurrentIndex(0);
 	
+	_ui->treeEntities->setModel(_core->entities());
+	
 	connect(_ui->butAbout, SIGNAL(clicked(bool)), this, SLOT(slotAboutDialog()));
 	connect(_ui->butSettings, SIGNAL(clicked(bool)), _core, SLOT(showSettings()));
 	connect(_ui->butOpenBspFile, SIGNAL(clicked(bool)), this, SLOT(slotOpenFile()));
@@ -69,8 +71,8 @@ void MainWindow::slotOpenFile()
 			{
 				_ui->labOpenedBspFile->setText(openMapFile);
 				
-				// TODO replace on the models
-				_ui->textEntities->setPlainText(_core->entities());
+				_ui->treeEntities->setModel(_core->entities() );
+
 				// TODO replace on the models
 				_ui->listResources->clear();
 				_ui->listResources->addItems(_core->resources());

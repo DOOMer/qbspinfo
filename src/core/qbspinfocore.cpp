@@ -81,6 +81,8 @@ QBspInfoCore::QBspInfoCore(QObject *parent) :
 	_errorCode = Core::none;
 	_conf->setObjectName("config");
 	_conf->load();
+	_entities = new EntityModel(this);
+	
 	connect(_conf, SIGNAL(configurationError()), this, SLOT(slotMessageToUser()));
 }
 
@@ -153,8 +155,6 @@ bool QBspInfoCore::openBspFile(const QString& filename)
 	{
 		Q3Texture texture;
 		fread(&texture, 1, sizeof(Q3Texture), bspFile);
-		qDebug() << texture.texName;
-		qDebug() << texture.surfaceFlags;
 		_resources << texture.texName;
 	}
 
@@ -165,9 +165,10 @@ bool QBspInfoCore::openBspFile(const QString& filename)
 	fseek(bspFile, header.lumps[BSP_LUMP_ENTITIES].offaet, SEEK_SET);
 	fread(entity.description, entity.size, sizeof(char), bspFile);
 
-	// TODO process entoity parsing, select sounds form it
-	qDebug() << "entity " << entity.description;
-	_entities = entity.description;
+	// TODO process entoity parsing, select sounds form it	
+	_entities_a = entity.description;
+	
+	_entities->parseRawData(entity.description);
 	
 	fclose(bspFile);
 	return true;
@@ -176,10 +177,17 @@ bool QBspInfoCore::openBspFile(const QString& filename)
 /*!
  *  Return pointer tolist of the entities, used in loaded BSP file.
  */
-QByteArray QBspInfoCore::entities()
+// TODO kill this method after conmplete EnitytModel code
+QByteArray QBspInfoCore::entities_a()
+{
+	return _entities_a;
+}
+
+EntityModel* QBspInfoCore::entities()
 {
 	return _entities;
 }
+
 
 /*!
  *  Return pointer tolist of the resources, used in loaded BSP file.

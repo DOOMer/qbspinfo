@@ -50,7 +50,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabEntities">
          <attribute name="title">
@@ -58,7 +58,7 @@
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="QPlainTextEdit" name="textEntities"/>
+           <widget class="QTreeView" name="treeEntities"/>
           </item>
          </layout>
         </widget>
