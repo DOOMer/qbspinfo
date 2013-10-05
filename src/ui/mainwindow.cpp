@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	_ui->tabWidget->setCurrentIndex(0);
 	
 	_ui->treeEntities->setModel(_core->entities());
+	_ui->treeEntities->resizeColumnToContents(0);
 	
 	setWindowTitle("QBspInfo - " + tr("No map is select"));
 	
@@ -75,6 +76,7 @@ void MainWindow::slotOpenFile()
 				_ui->labOpenedBspFile->setText(openMapFile);
 
 				_ui->treeEntities->resizeColumnToContents(0);
+				_ui->treeEntities->header()->setSectionResizeMode(0, QHeaderView::Fixed);				
 
 				// TODO replace on the models
 				_ui->listResources->clear();
