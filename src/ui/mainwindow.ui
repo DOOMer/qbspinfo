@@ -39,7 +39,7 @@
       <item>
        <widget class="QLabel" name="labOpenedBspFile">
         <property name="text">
-         <string notr="true"/>
+         <string notr="true">No map is select</string>
         </property>
        </widget>
       </item>
