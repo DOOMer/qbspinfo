@@ -235,9 +235,18 @@ void EntityModel::parseRawData(const char* data)
 		_entitesItemsList.append(item);
 		itemdata.clear();
 
-		// TODO add properies from tempPropertyMap
+		// create subitems for each entity prepoery
+		for (int p = 0; p < tempPropertyMap.keys().count(); p++)
+		{
+			itemdata << tempPropertyMap.keys().value(p).toUtf8();
+			itemdata << tempPropertyMap.value(itemdata.value(0)).toUtf8();
+			property = new EntityItem(itemdata, Entity::entityProperty, item);
+			item->addChild(property);
+			_entitesItemsList.append(property);
+			itemdata.clear();
+		}
 	}
-	Q_EMIT layoutChanged();
+	Q_EMIT layoutChanged(); // send signal for update view
 }
 
 /*!
