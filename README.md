@@ -1,7 +1,7 @@
 QBspInfo
 ==========
 
-version 0.5
+version 0.6
 
 App for getting info about Quake 3 BSP files.
 
@@ -15,7 +15,7 @@ Build requirements
 Build
 -----
 
-Build ScreenGrab, using these commands:
+Build QBspInfo, using these commands:
 
 	mkdir build
 	cd build

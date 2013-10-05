@@ -23,7 +23,7 @@ cmake_minimum_required(VERSION 2.8.8)
 set(PROJECT_NAME qbspinfo)
 project(${PROJECT_NAME})
  
-set(VERSION "0.5")
+set(VERSION "0.6")
 add_definitions( -DVERSION="${VERSION}")
 
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x" ) 
