@@ -260,7 +260,7 @@ void EntityModel::clearData()
 void EntityModel::createRoortElement()
 {
 	QVector<QByteArray> root;
-	root << tr("Entity (or property)").toUtf8() << tr("value").toUtf8();
+	root << tr("Entity (or property)").toUtf8() << tr("Value").toUtf8();
 	_rootItem = new EntityItem(root, Entity::entityGroup);
 	_entitesItemsList << _rootItem;
 }
