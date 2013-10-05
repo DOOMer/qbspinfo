@@ -70,8 +70,8 @@ void MainWindow::slotOpenFile()
 			if (_core->openBspFile(openMapFile))
 			{
 				_ui->labOpenedBspFile->setText(openMapFile);
-				
-				_ui->treeEntities->setModel(_core->entities() );
+
+				_ui->treeEntities->resizeColumnToContents(0);
 
 				// TODO replace on the models
 				_ui->listResources->clear();
