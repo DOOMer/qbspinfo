@@ -23,6 +23,7 @@
 
 #include "ui/aboutdialog.h"
 
+#include <QtCore/QFileInfo>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
 
@@ -35,10 +36,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow), _core(new QBspInfoCore(this))
 {
-    _ui->setupUi(this);
+    _ui->setupUi(this);	
 	_ui->tabWidget->setCurrentIndex(0);
 	
 	_ui->treeEntities->setModel(_core->entities());
+	
+	setWindowTitle("QBspInfo - " + tr("No map is select"));
 	
 	connect(_ui->butAbout, SIGNAL(clicked(bool)), this, SLOT(slotAboutDialog()));
 	connect(_ui->butSettings, SIGNAL(clicked(bool)), _core, SLOT(showSettings()));
@@ -76,6 +79,9 @@ void MainWindow::slotOpenFile()
 				// TODO replace on the models
 				_ui->listResources->clear();
 				_ui->listResources->addItems(_core->resources());
+				
+				QFileInfo selectedMap(openMapFile);
+				setWindowTitle("QBspInfo - " + selectedMap.baseName());
 			}
 		}
 	}
