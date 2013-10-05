@@ -29,10 +29,7 @@
 EntityModel::EntityModel(QObject *parent) :
     QAbstractItemModel(parent)
 {	
-	QVector<QByteArray> root;
-	root << tr("Entity (or property)").toUtf8() << tr("value").toUtf8();
-	_rootItem = new EntityItem(root, Entity::entityGroup);
-	_entitesItemsList << _rootItem;
+	createRoortElement();
 }
 
 EntityModel::~EntityModel()
@@ -40,6 +37,10 @@ EntityModel::~EntityModel()
 	clearData();
 }
 
+/*!
+ * Returns the data stored under the DislpayRole.
+ * \return QVariant Call data() method with the index of column.
+ */
 QVariant EntityModel::data(const QModelIndex& index, int role) const
 {
 	if (!index.isValid() || role != Qt::DisplayRole)
@@ -49,6 +50,9 @@ QVariant EntityModel::data(const QModelIndex& index, int role) const
 	return item->data(index.column());
 }
 
+/*!
+ * Returns the item flags for the given index.
+ */
 Qt::ItemFlags EntityModel::flags(const QModelIndex& index) const
 {
     if (!index.isValid())
@@ -57,7 +61,10 @@ Qt::ItemFlags EntityModel::flags(const QModelIndex& index) const
     return QAbstractItemModel::flags(index);
 }
 
-
+/*!
+ * Returns the data for the section in the header with horizontal orientation only. 
+ * \return QVariant Text data from root element.
+ */
 QVariant EntityModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
@@ -66,7 +73,11 @@ QVariant EntityModel::headerData(int section, Qt::Orientation orientation, int r
     return QVariant();
 }
 
-
+/*!
+ * Returns the index of the item in the model specified by the given row, column and parent index.
+ * \param QModelIndex parent Paren element for current.
+ * \return QModelIndex Calculated index.
+ */
 QModelIndex EntityModel::index(int row, int column, const QModelIndex& parent) const
 {
     if (!hasIndex(row, column, parent))
@@ -89,10 +100,16 @@ QModelIndex EntityModel::index(int row, int column, const QModelIndex& parent) c
 	}
 	else
 	{
-		QModelIndex();
+		return QModelIndex();
 	}
 }
 
+/*!
+ * Returns the parent of the model item with the given index. 
+ * If given index is a index of root element, then return empty QModelIndex.
+ * \param QModelIndex index Infex of element, for which the need calculate parent..
+ * \return QModelIndex Calculated index.
+ */
 QModelIndex EntityModel::parent(const QModelIndex& index) const
 {
 	if (!index.isValid())
@@ -133,7 +150,7 @@ int EntityModel::rowCount(const QModelIndex& parent) const
 }
 
 /*!
- * Return the number of columns for the children of the given parent.
+ * Returns the number of columns for the children of the given parent.
  * \param QModelIndex paren Parent item modelindex. If its ni valid, return 'columnCount' for root item.
  */
 int EntityModel::columnCount(const QModelIndex& parent) const
@@ -153,11 +170,17 @@ int EntityModel::columnCount(const QModelIndex& parent) const
  */
 void EntityModel::parseRawData(const char* data)
 {	
+	createRoortElement();
+	
 	QStringList tempEntList = QString(data).mid(1, QString(data).size() - 3).split("}\n{");
 	QStringList tempPropertyList;
 	QMap<QString, int> tempClassnamesList;
 	QMap<QString, QString> tempPropertyMap;
 	QVector<QByteArray> itemdata;
+
+	EntityItem *item = nullptr;
+	EntityItem *group = nullptr;
+	EntityItem *property = nullptr;
 	
 	for (int i = 0; i < tempEntList.count(); ++i)
 	{
@@ -183,15 +206,11 @@ void EntityModel::parseRawData(const char* data)
 				tempPropertyMap.insert(s[0], s[1]);
 			}
 		}
-// 		qDebug() << tempPropertyMap;
 		
 		QString classname = tempPropertyMap.value("classname");
-		int ci = tempClassnamesList.keys().indexOf(classname);
-		
-		EntityItem *item = nullptr;
-		EntityItem *group = nullptr;
-		
-		if (ci != -1)
+		int ci = tempClassnamesList.value(classname);
+
+		if (ci != 0)
 		{
 			// get group identifier
 			group = _entitesItemsList.at(ci);
@@ -199,28 +218,26 @@ void EntityModel::parseRawData(const char* data)
 		else
 		{
 			// create group identifier
-			itemdata << classname.toLatin1();
+			itemdata << classname.toUtf8() << "";
 			group = new EntityItem(itemdata, Entity::entityGroup, _rootItem);
 			_rootItem->addChild(group);
 			_entitesItemsList.append(group);
-			Q_EMIT layoutChanged();
 			itemdata.clear();
 			
 			// get index for added group item, and add it into temp list
 			int grIndex = _entitesItemsList.indexOf(group);
 			tempClassnamesList.insert(classname, grIndex);
 		}
-// 		QVector<QBitArray> data;
-		itemdata << classname.toLatin1();
+
+		itemdata << classname.toLatin1() << "";
 		item = new EntityItem(itemdata, Entity::entityItem, group);
 		group->addChild(item);
 		_entitesItemsList.append(item);
-		Q_EMIT layoutChanged();
-		
 		itemdata.clear();
-		
+
 		// TODO add properies from tempPropertyMap
 	}
+	Q_EMIT layoutChanged();
 }
 
 /*!
@@ -229,4 +246,12 @@ void EntityModel::parseRawData(const char* data)
 void EntityModel::clearData()
 {
 	qDeleteAll(_entitesItemsList);
+}
+
+void EntityModel::createRoortElement()
+{
+	QVector<QByteArray> root;
+	root << tr("Entity (or property)").toUtf8() << tr("value").toUtf8();
+	_rootItem = new EntityItem(root, Entity::entityGroup);
+	_entitesItemsList << _rootItem;
 }

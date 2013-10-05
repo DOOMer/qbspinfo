@@ -49,6 +49,8 @@ public:
 private:
 	QList<EntityItem*> _entitesItemsList;
 	EntityItem *_rootItem;
+	
+	void createRoortElement();
 };
 
 #endif // ENTITYMODEL_H
